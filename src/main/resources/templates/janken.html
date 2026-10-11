@@ -1,0 +1,10 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+  <!-- th:if で、username が渡されているときだけこのdivを表示する -->
+  <!-- /janken を直接開いたときは username が無いので、何も表示されない -->
+  <div th:if="${username}">
+    <!-- 渡されたユーザ名を埋め込んで表示する -->
+    Hi [[${username}]]
+  </div>
+</body>

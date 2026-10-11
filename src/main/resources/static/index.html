@@ -1,1 +1,51 @@
-Hello Github Flow!
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <title>じゃんけんゲーム</title>
+  <style>
+    body {
+      text-align: center;
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background-color: rgb(51, 104, 160);
+      align-items: center;
+    }
+
+    h1 {
+      font-size: 50px;
+      color: rgb(102, 163, 191);
+      font-family: sans-serif;
+      letter-spacing: 20px;
+      text-shadow: 3px 3px 10px gray;
+      border: 3px double #0871db;
+      padding: 25px 30px 25px 50px;
+    }
+
+    p {
+      font-size: 30px;
+      color: rgb(102, 163, 191);
+    }
+  </style>
+</head>
+
+<body>
+  <h1>ようこそ</h1>
+
+  <p>ここはじゃんけんゲームのトップページです。</p>
+  <p>HTMLむずかしいです。</p>
+
+  <form action="/janken" method="post">
+    <input type="text" name="username" />
+    <input type="submit" value="参加" />
+  </form>
+
+</body>
+
+
+
+</html>
