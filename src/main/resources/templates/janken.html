@@ -7,4 +7,17 @@
     <!-- 渡されたユーザ名を埋め込んで表示する -->
     Hi [[${username}]]
   </div>
+
+  <!-- クリックすると、選んだ手を記号にして /fight に送るリンク -->
+  <a href="/fight?hand=gu">グー</a>
+  <a href="/fight?hand=choki">チョキ</a>
+  <a href="/fight?hand=pa">パー</a>
+
+  <!-- 勝負の結果が渡されたときだけ表示する -->
+  <div th:if="${janken}">
+    <!-- Jankenクラスのgetterを通して、それぞれの値を表示する -->
+    <p>あなたの手：[[${janken.myHand}]]</p>
+    <p>相手の手：[[${janken.cpuHand}]]</p>
+    <p>結果：[[${janken.result}]]</p>
+  </div>
 </body>
