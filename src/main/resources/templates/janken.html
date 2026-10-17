@@ -1,6 +1,19 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <body>
+  <!-- ログイン中のユーザ名を表示する -->
+  <p>ログインユーザ：[[${loginUser}]]</p>
+
+  <!-- Spring Securityが用意しているログアウト確認画面へのリンク -->
+  <a href="/logout">ログアウト</a>
+
+  <!-- エントリーしている全ユーザの一覧 -->
+  <h2>エントリー</h2>
+  <ul>
+    <!-- 一覧の名前を1つずつ取り出して表示する -->
+    <li th:each="user : ${entry?.users}">[[${user}]]</li>
+  </ul>
+
   <!-- th:if で、username が渡されているときだけこのdivを表示する -->
   <!-- /janken を直接開いたときは username が無いので、何も表示されない -->
   <div th:if="${username}">

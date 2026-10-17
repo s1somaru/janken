@@ -8,19 +8,32 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestParam;
 import oit.is.z3438.kaizi.janken.model.Janken;
+import java.security.Principal;
+import org.springframework.beans.factory.annotation.Autowired;
+import oit.is.z3438.kaizi.janken.model.Entry;
 
 @Controller // このクラスがブラウザからのリクエストを受け付ける役割だと示す
 public class JankenController {
 
-  @GetMapping("/janken") // /janken を直接開いたとき（新しいタブで開いたときなど）に呼ばれる
-  public String janken() {
-    return "janken.html"; // ユーザ名は渡さずに janken.html を表示する
+  @Autowired
+  private Entry entry; // このクラスの中だけで使う
+
+  @GetMapping("/janken") // /janken を開いたときに呼ばれる
+  public String janken(Principal prin, ModelMap model) { // prin にログインしているユーザの情報が入る
+    String loginUser = prin.getName(); // ログインしているユーザ名を取り出す
+    entry.addUser(loginUser); // 共有しているエントリー一覧に自分を追加する
+    model.addAttribute("loginUser", loginUser); // ログインユーザ名をHTMLに渡す
+    model.addAttribute("entry", entry); // エントリー一覧をHTMLに渡す
+    return "janken.html"; // janken.html を表示する
   }
 
   @PostMapping("/janken") // index.html のフォームから送られてきたときに呼ばれる
-  public String jankenEntry(@RequestParam String username, ModelMap model) { // フォームの name="username" の値を受け取る
-    model.addAttribute("username", username); // "username" という名前で、入力されたユーザ名をHTMLに渡す
-    return "janken.html"; // ユーザ名を渡した状態で janken.html を表示する
+  public String jankenEntry(@RequestParam String username, Principal prin, ModelMap model) { // ログイン情報も受け取る
+    entry.addUser(prin.getName()); // 共有しているエントリー一覧に自分を追加する
+    model.addAttribute("username", username); // 入力されたユーザ名をHTMLに渡す
+    model.addAttribute("loginUser", prin.getName()); // ログインユーザ名をHTMLに渡す
+    model.addAttribute("entry", entry); // エントリー一覧をHTMLに渡す
+    return "janken.html"; // janken.html を表示する
   }
 
   @GetMapping("/fight") // グー・チョキ・パーのリンクをクリックしたときに呼ばれる
