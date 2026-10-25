@@ -31,7 +31,10 @@ public class JankenAuthConfiguration {
             .requestMatchers("/janken/**").authenticated() // /janken/以下は認証済みであること
             .anyRequest().permitAll()) // 上記以外は全員アクセス可能
         .csrf(csrf -> csrf
-            .ignoringRequestMatchers("/janken/**")); // janken用にCSRF対策を無効化
+            .ignoringRequestMatchers("/h2-console/**", "/janken/**")) // h2-consoleとjankenではCSRF対策を無効化
+        .headers(headers -> headers
+            .frameOptions(frameOptions -> frameOptions
+                .sameOrigin())); // 同じサイト内ならh2-consoleの画面を枠（フレーム）の中に表示してよい
     return http.build();
   }
 
