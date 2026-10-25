@@ -58,11 +58,25 @@ public class JankenController {
     return "janken.html"; // janken.html を表示する
   }
 
-  @GetMapping("/fight") // グー・チョキ・パーのリンクをクリックしたときに呼ばれる
-  public String fight(@RequestParam String hand, ModelMap model) { // URLの ?hand=〇〇 の値を受け取る
-    Janken janken = new Janken(hand); // 受け取った手でCPUと勝負する
-    model.addAttribute("janken", janken); // 勝負の結果を "janken" という名前でHTMLに渡す
-    return "janken.html"; // 結果を渡した状態で janken.html を表示する
+  @GetMapping("/fight") // match.html のじゃんけんの手のリンクをクリックしたときに呼ばれる
+  public String fight(@RequestParam String hand, @RequestParam Integer id, Principal prin, ModelMap model) { // 出した手と相手のidを受け取る
+    String loginUser = prin.getName(); // ログインしているユーザ名を取り出す
+    User me = userMapper.selectByName(loginUser); // 名前から自分のユーザ情報（id）をDBから取得する
+    User opponent = userMapper.selectById(id); // 相手（CPU）のユーザ情報をDBから取得する
+
+    Janken janken = new Janken(hand.toLowerCase()); // 手を小文字（gu/choki/pa）にしてCPUと勝負する
+
+    Match match = new Match(); // 登録する1試合分のデータを作る
+    match.setUser1(me.getId()); // 自分のid
+    match.setUser2(opponent.getId()); // 相手のid
+    match.setUser1Hand(hand); // 自分の手（Gu/Choki/Pa）
+    match.setUser2Hand("Gu"); // CPUの手（Janken.javaと同じく常にグー）
+    matchMapper.insertMatch(match); // matchesテーブルに登録する
+
+    model.addAttribute("loginUser", loginUser); // ログインユーザ名をHTMLに渡す
+    model.addAttribute("opponent", opponent); // 対戦相手をHTMLに渡す
+    model.addAttribute("janken", janken); // 勝負の結果をHTMLに渡す
+    return "match.html"; // 結果を表示した match.html を返す
   }
 
   @GetMapping("/match") // エントリー一覧のユーザ名をクリックしたときに呼ばれる
