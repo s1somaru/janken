@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import oit.is.z3438.kaizi.janken.model.User;
 import oit.is.z3438.kaizi.janken.model.UserMapper;
 
+import oit.is.z3438.kaizi.janken.model.Match;
+import oit.is.z3438.kaizi.janken.model.MatchMapper;
+
 @Controller // このクラスがブラウザからのリクエストを受け付ける役割だと示す
 public class JankenController {
 
@@ -25,6 +28,9 @@ public class JankenController {
   @Autowired
   private UserMapper userMapper; // DBのusersテーブルを読むためのMapper（Springが自動で入れてくれる）
 
+  @Autowired
+  private MatchMapper matchMapper; // DBのmatchesテーブルを読むためのMapper（Springが自動で入れてくれる）
+
   @GetMapping("/janken") // /janken を開いたときに呼ばれる
   public String janken(Principal prin, ModelMap model) { // prin にログインしているユーザの情報が入る
     String loginUser = prin.getName(); // ログインしているユーザ名を取り出す
@@ -33,6 +39,8 @@ public class JankenController {
     model.addAttribute("entry", entry); // エントリー一覧をHTMLに渡す
     ArrayList<User> users = userMapper.selectAllUsers(); // DBから全ユーザを取得する
     model.addAttribute("users", users); // ユーザ一覧をHTMLに渡す
+    ArrayList<Match> matches = matchMapper.selectAllMatches(); // DBから全試合結果を取得する
+    model.addAttribute("matches", matches); // 試合結果の一覧をHTMLに渡す
     return "janken.html"; // janken.html を表示する
 
   }
@@ -45,6 +53,8 @@ public class JankenController {
     model.addAttribute("entry", entry); // エントリー一覧をHTMLに渡す
     ArrayList<User> users = userMapper.selectAllUsers(); // DBから全ユーザを取得する
     model.addAttribute("users", users); // ユーザ一覧をHTMLに渡す
+    ArrayList<Match> matches = matchMapper.selectAllMatches(); // DBから全試合結果を取得する
+    model.addAttribute("matches", matches); // 試合結果の一覧をHTMLに渡す
     return "janken.html"; // janken.html を表示する
   }
 

@@ -17,6 +17,14 @@
     <li th:each="user : ${users}">[[${user.name}]]</li>
   </ul>
 
+  <!-- DBに登録されている全試合結果の一覧 -->
+  <h2>試合結果</h2>
+  <!-- matchesから1試合ずつ取り出して表示する（無いときは何も表示しない） -->
+  <div th:each="match : ${matches}">
+    id:[[${match.id}]] user1:[[${match.user1}]] user2:[[${match.user2}]] user1Hand:[[${match.user1Hand}]]
+    user2Hand:[[${match.user2Hand}]]
+  </div>
+
   <!-- th:if で、username が渡されているときだけこのdivを表示する -->
   <!-- /janken を直接開いたときは username が無いので、何も表示されない -->
   <div th:if="${username}">
