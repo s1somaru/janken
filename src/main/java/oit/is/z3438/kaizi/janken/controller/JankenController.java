@@ -12,11 +12,18 @@ import java.security.Principal;
 import org.springframework.beans.factory.annotation.Autowired;
 import oit.is.z3438.kaizi.janken.model.Entry;
 
+import java.util.ArrayList;
+import oit.is.z3438.kaizi.janken.model.User;
+import oit.is.z3438.kaizi.janken.model.UserMapper;
+
 @Controller // このクラスがブラウザからのリクエストを受け付ける役割だと示す
 public class JankenController {
 
   @Autowired
   private Entry entry; // このクラスの中だけで使う
+
+  @Autowired
+  private UserMapper userMapper; // DBのusersテーブルを読むためのMapper（Springが自動で入れてくれる）
 
   @GetMapping("/janken") // /janken を開いたときに呼ばれる
   public String janken(Principal prin, ModelMap model) { // prin にログインしているユーザの情報が入る
@@ -24,7 +31,10 @@ public class JankenController {
     entry.addUser(loginUser); // 共有しているエントリー一覧に自分を追加する
     model.addAttribute("loginUser", loginUser); // ログインユーザ名をHTMLに渡す
     model.addAttribute("entry", entry); // エントリー一覧をHTMLに渡す
+    ArrayList<User> users = userMapper.selectAllUsers(); // DBから全ユーザを取得する
+    model.addAttribute("users", users); // ユーザ一覧をHTMLに渡す
     return "janken.html"; // janken.html を表示する
+
   }
 
   @PostMapping("/janken") // index.html のフォームから送られてきたときに呼ばれる
@@ -33,6 +43,8 @@ public class JankenController {
     model.addAttribute("username", username); // 入力されたユーザ名をHTMLに渡す
     model.addAttribute("loginUser", prin.getName()); // ログインユーザ名をHTMLに渡す
     model.addAttribute("entry", entry); // エントリー一覧をHTMLに渡す
+    ArrayList<User> users = userMapper.selectAllUsers(); // DBから全ユーザを取得する
+    model.addAttribute("users", users); // ユーザ一覧をHTMLに渡す
     return "janken.html"; // janken.html を表示する
   }
 
