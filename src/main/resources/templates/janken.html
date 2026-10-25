@@ -10,11 +10,10 @@
   <!-- Spring Securityが用意しているログアウト確認画面へのリンク -->
   <a href="/logout">ログアウト</a>
 
-  <!-- DBに登録されている全ユーザの一覧 -->
   <h2>エントリー</h2>
   <ul>
-    <!-- usersから1人ずつ取り出して名前を表示する（無いときは何も表示しない） -->
-    <li th:each="user : ${users}">[[${user.name}]]</li>
+    <!-- 各ユーザ名を、そのユーザのidを付けた /match へのリンクにする -->
+    <li th:each="user : ${users}"><a th:href="@{/match(id=${user.id})}">[[${user.name}]]</a></li>
   </ul>
 
   <!-- DBに登録されている全試合結果の一覧 -->

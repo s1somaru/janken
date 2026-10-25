@@ -64,4 +64,12 @@ public class JankenController {
     model.addAttribute("janken", janken); // 勝負の結果を "janken" という名前でHTMLに渡す
     return "janken.html"; // 結果を渡した状態で janken.html を表示する
   }
+
+  @GetMapping("/match") // エントリー一覧のユーザ名をクリックしたときに呼ばれる
+  public String match(@RequestParam Integer id, Principal prin, ModelMap model) { // URLの ?id=〇〇 の値を受け取る
+    User opponent = userMapper.selectById(id); // クリックされたユーザ（対戦相手）をDBから取得する
+    model.addAttribute("loginUser", prin.getName()); // ログインユーザ名をHTMLに渡す
+    model.addAttribute("opponent", opponent); // 対戦相手をHTMLに渡す
+    return "match.html"; // match.html を表示する
+  }
 }
