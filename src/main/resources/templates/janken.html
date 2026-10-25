@@ -1,6 +1,9 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <body>
+  <!-- Spring Securityの認証情報からログインユーザ名を直接表示する -->
+  <p>ログインユーザ：<span sec:authentication="name"></span></p>
+
   <!-- ログイン中のユーザ名を表示する -->
   <p>ログインユーザ：[[${loginUser}]]</p>
 
@@ -33,4 +36,7 @@
     <p>相手の手：[[${janken.cpuHand}]]</p>
     <p>結果：[[${janken.result}]]</p>
   </div>
+
+  <!-- GETで /janken を開くリンク（未ログインならログイン画面が出る） -->
+  <p><a href="/janken">jankenへのGETをリクエスト</a></p>
 </body>
