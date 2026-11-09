@@ -22,6 +22,9 @@ import oit.is.z3438.kaizi.janken.model.MatchMapper;
 import oit.is.z3438.kaizi.janken.model.MatchInfo;
 import oit.is.z3438.kaizi.janken.model.MatchInfoMapper;
 
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import oit.is.z3438.kaizi.janken.model.AsyncKekka;
+
 @Controller // このクラスがブラウザからのリクエストを受け付ける役割だと示す
 public class JankenController {
 
@@ -36,6 +39,9 @@ public class JankenController {
 
   @Autowired
   private MatchInfoMapper matchInfoMapper; // DBのmatchinfoテーブルを読み書きするためのMapper
+
+  @Autowired
+  private AsyncKekka asyncKekka; // SSEで結果を待つ処理を持つクラス
 
   @GetMapping("/janken") // /janken を開いたときに呼ばれる
   public String janken(Principal prin, ModelMap model) { // prin にログインしているユーザの情報が入る
@@ -130,5 +136,13 @@ public class JankenController {
 
     model.addAttribute("loginUser", loginUser); // ログインユーザ名をHTMLに渡す
     return "wait.html"; // wait.html を表示する
+  }
+
+  @GetMapping(value = "/kekka", produces = "text/event-stream;charset=UTF-8") // wait.html から接続される（SSE）
+  public SseEmitter kekka(Principal prin) { // ログインしているユーザの情報を受け取る
+    User me = userMapper.selectByName(prin.getName()); // 名前から自分のユーザ情報（id）を取得する
+    SseEmitter emitter = new SseEmitter(600_000L); // 最大10分間つなぎっぱなしにできるSseEmitterを作る
+    asyncKekka.waitResult(emitter, me.getId()); // 別スレッドで結果が出るのを待ち始める
+    return emitter; // すぐに返す（結果は後から非同期で送られる）
   }
 }
