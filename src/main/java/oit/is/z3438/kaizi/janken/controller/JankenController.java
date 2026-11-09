@@ -107,12 +107,26 @@ public class JankenController {
     User me = userMapper.selectByName(loginUser); // 名前から自分のユーザ情報（id）をDBから取得する
     User opponent = userMapper.selectById(id); // 相手のユーザ情報をDBから取得する
 
-    MatchInfo matchInfo = new MatchInfo(); // 登録する1件分のデータを作る
-    matchInfo.setUser1(me.getId()); // 自分のid
-    matchInfo.setUser2(opponent.getId()); // 相手のid
-    matchInfo.setUser1Hand(hand); // 自分の手（Gu/Choki/Pa）
-    matchInfo.setIsActive(true); // 試合中なのでtrueにする
-    matchInfoMapper.insertMatchInfo(matchInfo); // matchinfoテーブルに登録する
+    // 相手が自分を指名して待っているmatchinfoがあるか調べる
+    MatchInfo waiting = matchInfoMapper.selectWaitingMatchInfo(opponent.getId(), me.getId());
+
+    if (waiting == null) { // 待っている相手がいない（自分が先手）場合
+      MatchInfo matchInfo = new MatchInfo(); // 登録する1件分のデータを作る
+      matchInfo.setUser1(me.getId()); // 自分のid
+      matchInfo.setUser2(opponent.getId()); // 相手のid
+      matchInfo.setUser1Hand(hand); // 自分の手（Gu/Choki/Pa）
+      matchInfo.setIsActive(true); // 試合中なのでtrueにする
+      matchInfoMapper.insertMatchInfo(matchInfo); // matchinfoテーブルに登録して待機する
+    } else { // 相手がすでに待っている（自分が後手）場合は試合成立
+      Match match = new Match(); // matchesに登録する1試合分のデータを作る
+      match.setUser1(waiting.getUser1()); // 先手（プレイヤーA）のid
+      match.setUser2(me.getId()); // 後手（プレイヤーB＝自分）のid
+      match.setUser1Hand(waiting.getUser1Hand()); // 先手の手（matchinfoに保存してあったもの）
+      match.setUser2Hand(hand); // 後手の手（今選んだもの）
+      match.setIsActive(true); // TRUEで登録する
+      matchMapper.insertMatch(match); // matchesテーブルに登録する
+      matchInfoMapper.updateMatchInfoInactive(waiting.getId()); // 待機していたmatchinfoをFALSEに更新する
+    }
 
     model.addAttribute("loginUser", loginUser); // ログインユーザ名をHTMLに渡す
     return "wait.html"; // wait.html を表示する
