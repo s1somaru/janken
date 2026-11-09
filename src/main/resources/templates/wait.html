@@ -1,20 +1,26 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head>
-  <meta charset="utf-8">
-  <title>待機中</title>
-</head>
-
 <body>
   <!-- ログインしているユーザ名を表示する -->
   <p>Hi [[${loginUser}]]</p>
 
-  <!-- 相手が手を出すのを待っていることを表示する -->
-  <p>相手の手を待ってます</p>
+  <!-- 相手が手を出すのを待っていることを表示する（結果が来たら書き換える） -->
+  <p id="message">相手の手を待ってます</p>
 
-  <!-- じゃんけんページに戻るリンク -->
-  <a href="/janken">もどる</a>
+  <!-- 結果が来るまでは隠しておく戻るリンク -->
+  <a id="back" href="/janken" style="display: none;">戻る</a>
+
+  <script>
+    // サーバの /kekka につなぎ，結果が送られてくるのを待つ
+    const sse = new EventSource('/kekka');
+    // サーバから結果が届いたときの処理
+    sse.onmessage = function (event) {
+      document.getElementById('message').textContent = '対戦結果：' + event.data; // 結果を表示する
+      document.getElementById('back').style.display = 'inline'; // 戻るリンクを表示する
+      sse.close(); // 勝手に再接続しないよう，こちらから接続を閉じる
+    };
+  </script>
 </body>
 
 </html>
