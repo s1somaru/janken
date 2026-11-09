@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="utf-8">
+  <title>待機中</title>
+</head>
+
+<body>
+  <!-- ログインしているユーザ名を表示する -->
+  <p>Hi [[${loginUser}]]</p>
+
+  <!-- 相手が手を出すのを待っていることを表示する -->
+  <p>相手の手を待ってます</p>
+
+  <!-- じゃんけんページに戻るリンク -->
+  <a href="/janken">もどる</a>
+</body>
+
+</html>

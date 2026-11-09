@@ -19,6 +19,9 @@ import oit.is.z3438.kaizi.janken.model.UserMapper;
 import oit.is.z3438.kaizi.janken.model.Match;
 import oit.is.z3438.kaizi.janken.model.MatchMapper;
 
+import oit.is.z3438.kaizi.janken.model.MatchInfo;
+import oit.is.z3438.kaizi.janken.model.MatchInfoMapper;
+
 @Controller // このクラスがブラウザからのリクエストを受け付ける役割だと示す
 public class JankenController {
 
@@ -31,6 +34,9 @@ public class JankenController {
   @Autowired
   private MatchMapper matchMapper; // DBのmatchesテーブルを読むためのMapper（Springが自動で入れてくれる）
 
+  @Autowired
+  private MatchInfoMapper matchInfoMapper; // DBのmatchinfoテーブルを読み書きするためのMapper
+
   @GetMapping("/janken") // /janken を開いたときに呼ばれる
   public String janken(Principal prin, ModelMap model) { // prin にログインしているユーザの情報が入る
     String loginUser = prin.getName(); // ログインしているユーザ名を取り出す
@@ -41,6 +47,10 @@ public class JankenController {
     model.addAttribute("users", users); // ユーザ一覧をHTMLに渡す
     ArrayList<Match> matches = matchMapper.selectAllMatches(); // DBから全試合結果を取得する
     model.addAttribute("matches", matches); // 試合結果の一覧をHTMLに渡す
+
+    ArrayList<MatchInfo> activeMatches = matchInfoMapper.selectActiveMatchInfos(); // 試合中のものだけDBから取得する
+    model.addAttribute("activeMatches", activeMatches); // アクティブな試合の一覧をHTMLに渡す
+
     return "janken.html"; // janken.html を表示する
 
   }
@@ -55,6 +65,10 @@ public class JankenController {
     model.addAttribute("users", users); // ユーザ一覧をHTMLに渡す
     ArrayList<Match> matches = matchMapper.selectAllMatches(); // DBから全試合結果を取得する
     model.addAttribute("matches", matches); // 試合結果の一覧をHTMLに渡す
+
+    ArrayList<MatchInfo> activeMatches = matchInfoMapper.selectActiveMatchInfos(); // 試合中のものだけDBから取得する
+    model.addAttribute("activeMatches", activeMatches); // アクティブな試合の一覧をHTMLに渡す
+
     return "janken.html"; // janken.html を表示する
   }
 
@@ -85,5 +99,22 @@ public class JankenController {
     model.addAttribute("loginUser", prin.getName()); // ログインユーザ名をHTMLに渡す
     model.addAttribute("opponent", opponent); // 対戦相手をHTMLに渡す
     return "match.html"; // match.html を表示する
+  }
+
+  @GetMapping("/wait") // match.html で手を選んだときに呼ばれる
+  public String wait(@RequestParam String hand, @RequestParam Integer id, Principal prin, ModelMap model) { // 出した手と相手のidを受け取る
+    String loginUser = prin.getName(); // ログインしているユーザ名を取り出す
+    User me = userMapper.selectByName(loginUser); // 名前から自分のユーザ情報（id）をDBから取得する
+    User opponent = userMapper.selectById(id); // 相手のユーザ情報をDBから取得する
+
+    MatchInfo matchInfo = new MatchInfo(); // 登録する1件分のデータを作る
+    matchInfo.setUser1(me.getId()); // 自分のid
+    matchInfo.setUser2(opponent.getId()); // 相手のid
+    matchInfo.setUser1Hand(hand); // 自分の手（Gu/Choki/Pa）
+    matchInfo.setIsActive(true); // 試合中なのでtrueにする
+    matchInfoMapper.insertMatchInfo(matchInfo); // matchinfoテーブルに登録する
+
+    model.addAttribute("loginUser", loginUser); // ログインユーザ名をHTMLに渡す
+    return "wait.html"; // wait.html を表示する
   }
 }
