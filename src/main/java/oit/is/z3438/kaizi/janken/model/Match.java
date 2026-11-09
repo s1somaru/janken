@@ -7,6 +7,7 @@ public class Match {
   int user2;
   String user1Hand;
   String user2Hand;
+  boolean isActive;
 
   // 以下はgetter/setter（これがないとMyBatisやThymeleafが値を読み書きできない）
   public int getId() {
@@ -48,4 +49,13 @@ public class Match {
   public void setUser2Hand(String user2Hand) {
     this.user2Hand = user2Hand;
   }
+
+  public boolean getIsActive() {
+    return isActive;
+  }
+
+  public void setIsActive(boolean isActive) {
+    this.isActive = isActive;
+  }
+
 }
