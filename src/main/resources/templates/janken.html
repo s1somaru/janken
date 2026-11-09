@@ -16,6 +16,14 @@
     <li th:each="user : ${users}"><a th:href="@{/match(id=${user.id})}">[[${user.name}]]</a></li>
   </ul>
 
+  <!-- 今試合中（isActiveがtrue）の対戦の一覧 -->
+  <h2>アクティブな試合</h2>
+  <!-- activeMatchesから1件ずつ取り出して表示する（無いときは何も表示しない） -->
+  <div th:each="activeMatch : ${activeMatches}">
+    id:[[${activeMatch.id}]] user1:[[${activeMatch.user1}]] user2:[[${activeMatch.user2}]]
+    user1Hand:[[${activeMatch.user1Hand}]] isActive:[[${activeMatch.isActive}]]
+  </div>
+
   <!-- DBに登録されている全試合結果の一覧 -->
   <h2>試合結果</h2>
   <!-- matchesから1試合ずつ取り出して表示する（無いときは何も表示しない） -->
